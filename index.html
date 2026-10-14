@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh" translate="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
+  <title>PEMANTAPAN MEIHUA 4 UNIT 4C - Interaktif Kuis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Security & anti-interaction styles */
+    body {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 min-h-screen text-white flex flex-col items-center justify-between p-4">
+
+  <!-- Warning Modal for Tab Switching -->
+  <div id="warning-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white text-gray-800 rounded-2xl p-6 max-w-md w-full text-center shadow-2xl">
+      <div class="text-red-500 text-5xl mb-3">⚠️</div>
+      <h3 class="text-xl font-bold mb-2">Peringatan Keamanan!</h3>
+      <p class="text-sm text-gray-600 mb-4">Anda terdeteksi keluar dari halaman atau berpindah tab. Tindakan ini dilarang selama kuis berlangsung!</p>
+      <button onclick="closeWarning()" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-xl transition">Saya Mengerti</button>
+    </div>
+  </div>
+
+  <!-- Container Utama -->
+  <div class="max-w-3xl w-full bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20 my-auto">
+    
+    <!-- Screen 1: Input Nama -->
+    <div id="screen-start" class="text-center py-6">
+      <div class="inline-block bg-pink-500/20 text-pink-300 px-4 py-1.5 rounded-full text-sm font-semibold mb-4 border border-pink-500/30">
+        Sekolah Dasar Maitreyawira Palembang
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold mb-3 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 bg-clip-text text-transparent">
+        PEMANTAPAN MEIHUA 4 UNIT 4C
+      </h1>
+      <p class="text-gray-300 mb-8 text-sm md:text-base">Masukkan nama dan kelas Anda. Syarat kelulusan kuis ini adalah minimal **90%**.</p>
+      
+      <div class="max-w-md mx-auto space-y-4 text-left">
+        <div>
+          <label class="block text-sm font-medium mb-1 text-gray-200">Nama Lengkap:</label>
+          <input type="text" id="player-name" placeholder="Contoh: Budi Santoso" class="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-pink-400 text-white placeholder-gray-400">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1 text-gray-200">Kelas / 班级:</label>
+          <input type="text" id="player-class" placeholder="Contoh: 4A" class="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-pink-400 text-white placeholder-gray-400">
+        </div>
+        <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-95 mt-4">
+          Mulai Kuis Sekarang 🚀
+        </button>
+      </div>
+    </div>
+
+    <!-- Screen 2: Kuis Aktif -->
+    <div id="screen-quiz" class="hidden">
+      <!-- Info Header Kuis -->
+      <div class="flex flex-wrap justify-between items-center mb-4 border-b border-white/10 pb-3 gap-2">
+        <div>
+          <span id="current-question-num" class="text-xs uppercase font-bold tracking-wider text-pink-300 bg-pink-500/20 px-2.5 py-1 rounded-md border border-pink-500/30">Soal 1 dari 26</span>
+        </div>
+        <div class="text-sm font-medium text-gray-300">
+          Pemain: <span id="display-name" class="text-white font-bold"></span>
+        </div>
+      </div>
+
+      <!-- Banner Petunjuk Pengerjaan Per Bagian -->
+      <div id="instruction-banner" class="bg-yellow-500/20 border border-yellow-500/40 text-yellow-200 px-4 py-2.5 rounded-xl text-xs md:text-sm font-medium mb-4 flex items-center gap-2">
+        <span>💡</span>
+        <span id="instruction-text">Petunjuk Soal</span>
+      </div>
+
+      <!-- Kotak Pertanyaan & Teks Bacaan -->
+      <div class="mb-6">
+        <div id="reading-box" class="hidden bg-black/30 p-4 rounded-xl mb-4 text-sm text-gray-200 border border-white/10 max-h-44 overflow-y-auto">
+          <p class="font-bold text-yellow-300 mb-1">📖 课文 (小白不见了):</p>
+          <p class="leading-relaxed">她叫小玉,是我姐姐。她养了一只猫。这只猫很漂亮,它是一只很胖的白猫。姐姐给它起个名字叫小白。<br>有一天小白不见了,姐姐很着急。姐姐去房间里找,小白不在房间里,她去厨房里找,小白也不在厨房里。小白在哪儿呢?姐姐去我们家旁边的小商店找,但是小白也不在那儿。<br>商店里的林奶奶问姐姐:“小玉,你找什么?”姐姐说:“我找我的猫小白。”林奶奶听了说:“你的猫是白色的吗?我看见它在张老师家门口睡觉呢。”姐姐听了,跟林奶奶说谢谢,然后走去张老师家找小白。<br>她在张老师家门口找到了小白,她很高兴,就把小白带回家了。</p>
+        </div>
+        <h2 id="question-text" class="text-lg md:text-xl font-semibold mb-4 leading-relaxed text-yellow-100"></h2>
+      </div>
+
+      <!-- Opsi Jawaban -->
+      <div id="options-container" class="space-y-3 mb-6">
+        <!-- Opsi dimasukkan secara dinamis -->
+      </div>
+
+      <!-- Tombol Lanjut -->
+      <div class="flex justify-end">
+        <button id="next-btn" onclick="nextQuestion()" class="hidden bg-pink-600 hover:bg-pink-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow transition">
+          Soal Selanjutnya ➔
+        </button>
+      </div>
+    </div>
+
+    <!-- Screen 3: Hasil Akhir -->
+    <div id="screen-result" class="hidden text-center py-6">
+      <div id="result-icon" class="text-6xl mb-3">🏆</div>
+      <h2 id="result-title" class="text-3xl font-bold mb-2">Hasil Akhir</h2>
+      <p id="result-subtitle" class="text-gray-300 mb-6 text-sm md:text-base">Evaluasi Skor Kuis Anda</p>
+      
+      <div class="bg-white/10 rounded-2xl p-6 max-w-sm mx-auto mb-6 border border-white/20 shadow-inner">
+        <div class="text-sm text-gray-300 mb-1">Nama Pemain: <span id="res-name" class="font-bold text-white"></span></div>
+        <div class="text-sm text-gray-300 mb-3">Kelas: <span id="res-class" class="font-bold text-white"></span></div>
+        <div class="text-5xl font-extrabold text-yellow-300 mb-2" id="res-percentage">0%</div>
+        <div class="text-sm text-gray-200 mb-2" id="res-score-detail">Benar 0 dari 26 Soal</div>
+        <div id="pass-status" class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"></div>
+      </div>
+
+      <p id="fail-warning" class="hidden text-red-300 text-sm mb-6 bg-red-500/20 border border-red-500/30 p-3 rounded-xl max-w-md mx-auto">
+        ⚠️ Skor Anda belum mencapai **90%**. Sesuai aturan, Anda **diwajibkan mengulang kuis** sampai mencapai nilai minimal 90%!
+      </p>
+
+      <button id="retry-btn" onclick="startQuiz()" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold px-8 py-3 rounded-xl shadow transition">
+        Ulangi Kuis 🔄
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Branding Footer di setiap layar -->
+  <footer class="w-full text-center py-3 text-xs md:text-sm font-semibold tracking-wider text-pink-300/80 drop-shadow">
+    by lcnpalembang-08994477998
+  </footer>
+
+  <script>
+    // Master Data Kuis Berdasarkan PDF Pemantapan Meihua 4 Unit 4C
+    const rawQuestions = [
+      // BAGIAN 1: Benar / Salah (16 Soal) - Hanzi Murni tanpa Bahasa Indonesia
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "1. 小玉是小白的姐姐。",
+        options: [
+          { text: "对", isCorrect: false },
+          { text: "错", isCorrect: true }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "2. 小玉养了一只猫。",
+        options: [
+          { text: "对", isCorrect: true },
+          { text: "错", isCorrect: false }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "3. 小白是一只黑色的猫。",
+        options: [
+          { text: "对", isCorrect: false },
+          { text: "错", isCorrect: true }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "4. 小白是一只很胖的白猫。",
+        options: [
+          { text: "对", isCorrect: true },
+          { text: "错", isCorrect: false }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "5. 小玉给猫起名叫“小白”。",
+        options: [
+          { text: "对", isCorrect: true },
+          { text: "错", isCorrect: false }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "6. 有一天,小白不见了。",
+        options: [
+          { text: "对", isCorrect: true },
+          { text: "错", isCorrect: false }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "7. 小玉找到了小白以后很伤心。",
+        options: [
+          { text: "对", isCorrect: false },
+          { text: "错", isCorrect: true }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "8. 小玉先去房间里找小白。",
+        options: [
+          { text: "对", isCorrect: true },
+          { text: "错", isCorrect: false }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "9. 小白在厨房里。",
+        options: [
+          { text: "对", isCorrect: false },
+          { text: "错", isCorrect: true }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "10. 小玉去了家旁边的小商店找小白。",
+        options: [
+          { text: "对", isCorrect: true },
+          { text: "错", isCorrect: false }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "11. 林奶奶在商店里。",
+        options: [
+          { text: "对", isCorrect: true },
+          { text: "错", isCorrect: false }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "12. 林奶奶没有见过小白。",
+        options: [
+          { text: "对", isCorrect: false },
+          { text: "错", isCorrect: true }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "13. 林奶奶看见小白在张老师家门口睡觉。",
+        options: [
+          { text: "对", isCorrect: true },
+          { text: "错", isCorrect: false }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "14. 小玉没有跟林奶奶说谢谢。",
+        options: [
+          { text: "对", isCorrect: false },
+          { text: "错", isCorrect: true }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "15. 小玉在张老师家门口找到了小白。",
+        options: [
+          { text: "对", isCorrect: true },
+          { text: "错", isCorrect: false }
+        ]
+      },
+      {
+        section: 1,
+        type: "tf",
+        reading: true,
+        instruction: "Bagian 1: Bacalah teks cerita di atas, lalu tentukan apakah pernyataan berikut BENAR (对) atau SALAH (错).",
+        question: "16. 小玉最后把小白带回家了。",
+        options: [
+          { text: "对", isCorrect: true },
+          { text: "错", isCorrect: false }
+        ]
+      },
+
+      // BAGIAN 2: Hanzi Murni (5 Soal - Menggantikan Pinyin)
+      {
+        section: 2,
+        type: "mc",
+        reading: false,
+        instruction: "Bagian 2: Terjemahkan kalimat Hanzi berikut ke dalam bahasa Indonesia yang tepat.",
+        question: "17. Terjemahan untuk kalimat: “我要去厨房喝牛奶。” (21)",
+        options: [
+          { text: "Saya mau pergi ke kamar tidur minum susu.", isCorrect: false },
+          { text: "Saya mau pergi ke dapur minum susu.", isCorrect: true },
+          { text: "Ibu sedang memasak susu di dapur.", isCorrect: false },
+          { text: "Saya mau membeli susu di toko.", isCorrect: false }
+        ]
+      },
+      {
+        section: 2,
+        type: "mc",
+        reading: false,
+        instruction: "Bagian 2: Terjemahkan kalimat Hanzi berikut ke dalam bahasa Indonesia yang tepat.",
+        question: "18. Terjemahan untuk kalimat: “姐姐在房间里看书呢。” (22)",
+        options: [
+          { text: "Kakak perempuan sedang membaca buku di dalam kamar.", isCorrect: true },
+          { text: "Adik laki-laki sedang tidur di dalam kamar.", isCorrect: false },
+          { text: "Ibu meletakkan buku di atas meja.", isCorrect: false },
+          { text: "Kakak perempuan sedang menulis di ruang tamu.", isCorrect: false }
+        ]
+      },
+      {
+        section: 2,
+        type: "mc",
+        reading: false,
+        instruction: "Bagian 2: Terjemahkan kalimat Hanzi berikut ke dalam bahasa Indonesia yang tepat.",
+        question: "19. Terjemahan untuk kalimat: “妈妈把东西放在桌子上。” (23)",
+        options: [
+          { text: "Ibu sedang mencuci pakaian di rumah.", isCorrect: false },
+          { text: "Ibu meletakkan barang di atas meja.", isCorrect: true },
+          { text: "Ibu membeli barang-barang di toko.", isCorrect: false },
+          { text: "Ibu memasak makanan di atas meja.", isCorrect: false }
+        ]
+      },
+      {
+        section: 2,
+        type: "mc",
+        reading: false,
+        instruction: "Bagian 2: Terjemahkan kalimat Hanzi berikut ke dalam bahasa Indonesia yang tepat.",
+        question: "20. Terjemahan untuk kalimat: “外面下雨了，你不要出去。” (24)",
+        options: [
+          { text: "Di luar sedang cerah, kamu boleh pergi bermain.", isCorrect: false },
+          { text: "Hari sudah malam, kamu jangan keluar.", isCorrect: false },
+          { text: "Di luar sudah turun hujan, kamu jangan keluar.", isCorrect: true },
+          { text: "Cuaca sangat dingin, kamu harus keluar.", isCorrect: false }
+        ]
+      },
+      {
+        section: 2,
+        type: "mc",
+        reading: false,
+        instruction: "Bagian 2: Terjemahkan kalimat Hanzi berikut ke dalam bahasa Indonesia yang tepat.",
+        question: "21. Terjemahan untuk kalimat: “表哥在商店旁边踢足球。” (25)",
+        options: [
+          { text: "Mereka bermain sepak bola di samping toko.", isCorrect: true },
+          { text: "Mereka pergi ke toko membeli bola.", isCorrect: false },
+          { text: "Merek berlari di depan toko.", isCorrect: false },
+          { text: "Adik bermain bola di halaman rumah.", isCorrect: false }
+        ]
+      },
+
+      // BAGIAN 3: Menyusun Kata (5 Soal)
+      {
+        section: 3,
+        type: "mc",
+        reading: false,
+        instruction: "Bagian 3: Pilih susunan kata yang tepat untuk membentuk kalimat yang benar.",
+        question: "22. Susunan yang benar dari: 在 / 厨房里 / 妈妈 / 做饭 / 呢 (26)",
+        options: [
+          { text: "妈妈在厨房里做饭呢。", isCorrect: true },
+          { text: "厨房里妈妈在呢做饭。", isCorrect: false },
+          { text: "做饭妈妈在厨房里呢。", isCorrect: false },
+          { text: "呢妈妈在厨房里做饭。", isCorrect: false }
+        ]
+      },
+      {
+        section: 3,
+        type: "mc",
+        reading: false,
+        instruction: "Bagian 3: Pilih susunan kata yang tepat untuk membentuk kalimat yang benar.",
+        question: "23. Susunan yang benar dari: 丢 / 玩具 / 了 / 弟弟 / 的 / 很着急 / 他 (27)",
+        options: [
+          { text: "弟弟的玩具丢了，他很着急。", isCorrect: true },
+          { text: "丢了弟弟的玩具他很着急。", isCorrect: false },
+          { text: "他很着急弟弟的玩具丢了。", isCorrect: false },
+          { text: "玩具弟弟丢了的很着急他。", isCorrect: false }
+        ]
+      },
+      {
+        section: 3,
+        type: "mc",
+        reading: false,
+        instruction: "Bagian 3: Pilih susunan kata yang tepat untuk membentuk kalimat yang benar.",
+        question: "24. Susunan yang benar dari: 门 / 把 / 打开 / 请 / 你 (28)",
+        options: [
+          { text: "请你把门打开。", isCorrect: true },
+          { text: "你请把打开门。", isCorrect: false },
+          { text: "把门请你打开。", isCorrect: false },
+          { text: "打开门请你把。", isCorrect: false }
+        ]
+      },
+      {
+        section: 3,
+        type: "mc",
+        reading: false,
+        instruction: "Bagian 3: Pilih susunan kata yang tepat untuk membentuk kalimat yang benar.",
+        question: "25. Susunan yang benar dari: 在 / 妹妹 / 睡觉 / 床上 (29)",
+        options: [
+          { text: "妹妹在床上睡觉。", isCorrect: true },
+          { text: "床上妹妹在睡觉。", isCorrect: false },
+          { text: "睡觉妹妹在床上。", isCorrect: false },
+          { text: "在床上妹妹睡觉。", isCorrect: false }
+        ]
+      },
+      {
+        section: 3,
+        type: "mc",
+        reading: false,
+        instruction: "Bagian 3: Pilih susunan kata yang tepat untuk membentuk kalimat yang benar.",
+        question: "26. Susunan yang benar dari: 商店 / 我 / 去 / 买东西 / 想 (30)",
+        options: [
+          { text: "我想去商店买东西。", isCorrect: true },
+          { text: "我去商店想买东西。", isCorrect: false },
+          { text: "买东西我想去商店。", isCorrect: false },
+          { text: "商店我想去买东西。", isCorrect: false }
+        ]
+      }
+    ];
+
+    // Variables State
+    let activeQuizQuestions = [];
+    let currentIdx = 0;
+    let score = 0;
+    let playerName = "";
+    let playerClass = "";
+
+    // Web Audio API Sound Generator
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.2); // A5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      } else {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+        osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.3); // A2
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      }
+    }
+
+    // Function Pengacak Array (Fisher-Yates Shuffle)
+    function shuffleArray(array) {
+      const arr = JSON.parse(JSON.stringify(array));
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function startQuiz() {
+      const nameInput = document.getElementById("player-name").value.trim();
+      const classInput = document.getElementById("player-class").value.trim();
+
+      if (!nameInput || !classInput) {
+        alert("Harap masukkan Nama dan Kelas Anda terlebih dahulu!");
+        return;
+      }
+
+      playerName = nameInput;
+      playerClass = classInput;
+      score = 0;
+      currentIdx = 0;
+
+      // Acak urutan pertanyaan
+      activeQuizQuestions = shuffleArray(rawQuestions);
+
+      // Acak urutan pilihan jawaban untuk setiap pertanyaan
+      activeQuizQuestions.forEach(q => {
+        q.options = shuffleArray(q.options);
+      });
+
+      document.getElementById("display-name").innerText = `${playerName} (${playerClass})`;
+      document.getElementById("screen-start").classList.add("hidden");
+      document.getElementById("screen-result").classList.add("hidden");
+      document.getElementById("screen-quiz").classList.remove("hidden");
+
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const q = activeQuizQuestions[currentIdx];
+
+      document.getElementById("current-question-num").innerText = `Soal ${currentIdx + 1} dari ${activeQuizQuestions.length}`;
+      document.getElementById("instruction-text").innerText = q.instruction;
+      document.getElementById("question-text").innerText = q.question;
+
+      const readingBox = document.getElementById("reading-box");
+      if (q.reading) {
+        readingBox.classList.remove("hidden");
+      } else {
+        readingBox.classList.add("hidden");
+      }
+
+      const optionsContainer = document.getElementById("options-container");
+      optionsContainer.innerHTML = "";
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "w-full text-left p-4 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition font-medium text-white flex justify-between items-center group";
+        btn.innerHTML = `<span>${opt.text}</span><span class="opacity-0 group-hover:opacity-100 text-pink-300">Pilih ➔</span>`;
+        btn.onclick = () => selectAnswer(idx, btn);
+        optionsContainer.appendChild(btn);
+      });
+
+      document.getElementById("next-btn").classList.add("hidden");
+    }
+
+    function selectAnswer(selectedIndex, selectedBtn) {
+      const q = activeQuizQuestions[currentIdx];
+      const buttons = document.getElementById("options-container").children;
+
+      for (let i = 0; i < buttons.length; i++) {
+        buttons[i].disabled = true;
+        buttons[i].classList.remove("hover:bg-white/20");
+        if (q.options[i].isCorrect) {
+          buttons[i].classList.add("bg-green-600/80", "border-green-400");
+        }
+      }
+
+      if (q.options[selectedIndex].isCorrect) {
+        score++;
+        selectedBtn.classList.add("bg-green-600", "border-green-400");
+        playSound('correct');
+      } else {
+        selectedBtn.classList.add("bg-red-600/80", "border-red-400");
+        playSound('wrong');
+      }
+
+      document.getElementById("next-btn").classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      currentIdx++;
+      if (currentIdx < activeQuizQuestions.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById("screen-quiz").classList.add("hidden");
+      document.getElementById("screen-result").classList.remove("hidden");
+
+      document.getElementById("res-name").innerText = playerName;
+      document.getElementById("res-class").innerText = playerClass;
+
+      const percentage = Math.round((score / activeQuizQuestions.length) * 100);
+      document.getElementById("res-percentage").innerText = `${percentage}%`;
+      document.getElementById("res-score-detail").innerText = `Benar ${score} dari ${activeQuizQuestions.length} Soal`;
+
+      const passStatus = document.getElementById("pass-status");
+      const failWarning = document.getElementById("fail-warning");
+      const retryBtn = document.getElementById("retry-btn");
+      const resultIcon = document.getElementById("result-icon");
+      const resultTitle = document.getElementById("result-title");
+
+      if (percentage >= 90) {
+        resultIcon.innerText = "🎉";
+        resultTitle.innerText = "Selamat! Anda Lulus";
+        passStatus.className = "inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-green-500/30 text-green-300 border border-green-500/40";
+        passStatus.innerText = "LULUS (≥ 90%)";
+        failWarning.classList.add("hidden");
+        retryBtn.innerText = "Main Lagi 🔄";
+      } else {
+        resultIcon.innerText = "❌";
+        resultTitle.innerText = "Belum Lulus";
+        passStatus.className = "inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-red-500/30 text-red-300 border border-red-500/40";
+        passStatus.innerText = "TIDAK LULUS (< 90%)";
+        failWarning.classList.remove("hidden");
+        retryBtn.innerText = "Ulangi Kuis Sekarang 🔄";
+      }
+    }
+
+    // Sistem Pengamanan
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('copy', e => e.preventDefault());
+    document.addEventListener('cut', e => e.preventDefault());
+    document.addEventListener('paste', e => e.preventDefault());
+
+    document.addEventListener('keydown', e => {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J')) ||
+        (e.ctrlKey && e.key === 'u') ||
+        e.key === 'PrintScreen'
+      ) {
+        e.preventDefault();
+        showWarningModal();
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        showWarningModal();
+      }
+    });
+
+    window.addEventListener('blur', () => {
+      showWarningModal();
+    });
+
+    function showWarningModal() {
+      const modal = document.getElementById('warning-modal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeWarning() {
+      const modal = document.getElementById('warning-modal');
+      modal.classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
